@@ -1,0 +1,37 @@
+package com.example.wallet.model;
+
+import java.util.concurrent.atomic.AtomicLong;
+
+public class Wallet {
+
+    private final String id;
+    private final AtomicLong balance = new AtomicLong(0);
+
+    public Wallet(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public long getBalance() {
+        return balance.get();
+    }
+
+    public void add(long amount) {
+        balance.addAndGet(amount);
+    }
+
+    public boolean deduct(long amount) {
+        while (true) {
+            long current = balance.get();
+            if (current < amount) {
+                return false;
+            }
+            if (balance.compareAndSet(current, current - amount)) {
+                return true;
+            }
+        }
+    }
+}
